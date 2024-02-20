@@ -4,7 +4,342 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope&display=swap"
+      rel="stylesheet"
+    />
     <title>Document</title>
   </head>
-  <body></body>
+  <body class="font-anton bg-background">
+    <div
+      class="max-w-[1440px] m-auto flex flex-col justify-center items-center"
+    >
+      <div class="bg-header h-[667px] w-full flex flex-col">
+        <div class="m-14 ml-16">
+          <img src="./assets/brand/logo.png" alt="" />
+        </div>
+        <div class="h-full w-full flex justify-center items-center flex-col">
+          <h1 class="text-yellow text-[44px] text-center w-[890px] pr-24 pl-24">
+            CHERCHEZ PARMI PLUS DE 1500 RECETTES DU QUOTIDIEN,SIMPLES ET
+            DÉLICIEUSES
+          </h1>
+          <div class="pt-8 w-[954px]">
+            <div class="relative">
+              <input
+                id="searchInput"
+                type="text"
+                class="h-[72px] rounded-xl w-full outline-none pl-8 text-[16px] font-manrope bg-white"
+                placeholder="Rechercher une recette, un ingrédient, ..."
+              />
+              <!-- ajout d'une icon 'loupe' qui permet de lancer la recherche -->
+              <div
+                id="search"
+                class="absolute h-[52px] text-white w-[51px] rounded-[10px] flex justify-center items-center bg-black right-3 top-1/2 transform -translate-y-1/2 cursor-pointer hover:bg-yellow transition-all duration-300 hover:text-black"
+              >
+                <!-- Ici, vous pouvez ajouter votre icône personnalisée pour la loupe -->
+                <!-- add fontawesome icon -->
+                <i class="fas fa-search text-[27px] font-light"></i>
+              </div>
+              <div
+                id="clear"
+                class="absolute text-grey right-20 top-1/2 transform -translate-y-1/2 cursor-pointer size-4 flex items-center"
+              >
+                <!-- Ici, vous pouvez ajouter votre icône personnalisée pour la croix -->
+                <!-- add fontawesome icon -->
+                <i class="fas fa-times text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w-full flex pl-[100px] pr-[100px]">
+        <div class="mt-5 w-full flex gap-16">
+          <!-- create a custom select with cuqtom dropdown rounded border and fontawesome inon on the right-->
+          <div class="relative">
+            <button
+              id="ingredients"
+              class="bg-white h-[56px] font-manrope w-[195px] text-sm flex justify-between items-center text-gray-800 py-4 px-4 rounded-l-lg rounded-r-lg shadow-md"
+            >
+              Ingrédients
+              <svg
+                id="ingredients_arrow"
+                class="fill-current w-6 h-6 rotate-180"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </button>
+            <div
+              id="ingredients_dropdown"
+              class="absolute h-[260px] bg-white rounded-br-[8px] top-[50px] rounded-bl-[8px] w-[195px] hidden z-10"
+            >
+              <div class="px-4 cursor-pointer relative">
+                <input
+                  class="h-9 border border-lightGrey text-sm text-grey font-manrope p-2 w-full focus:outline-none"
+                  type="text"
+                  name=""
+                  id="ingredients_input"
+                />
+                <div
+                  class="absolute right-6 top-1/2 transform -translate-y-1/2"
+                >
+                  <i class="fas fa-search text-grey"></i>
+                </div>
+                <div
+                  id="clear_ingredients"
+                  class="absolute right-12 top-1/2 transform -translate-y-1/2 cursor-pointer hidden"
+                >
+                  <i class="fas fa-times text-sm text-grey"></i>
+                </div>
+              </div>
+              <div class="flex flex-col h-56 overflow-auto">
+                <div class="flex flex-col">
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 1
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 2
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="relative">
+            <button
+              id="appareils"
+              class="bg-white h-[56px] font-manrope w-[195px] text-sm flex justify-between items-center text-gray-800 py-4 px-4 rounded-l-lg rounded-r-lg shadow-md"
+            >
+              Appareils
+              <svg
+                id="appareils_arrow"
+                class="fill-current w-6 h-6 rotate-180"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </button>
+            <div
+              id="appareils_dropdown"
+              class="absolute h-[260px] bg-white rounded-br-[8px] top-[50px] rounded-bl-[8px] w-[195px] hidden z-10"
+            >
+              <div class="px-4 cursor-pointer relative">
+                <input
+                  class="h-9 border border-lightGrey text-sm text-grey font-manrope p-2 w-full focus:outline-none"
+                  type="text"
+                  name=""
+                  id="appareils_input"
+                />
+                <div
+                  class="absolute right-6 top-1/2 transform -translate-y-1/2"
+                >
+                  <i class="fas fa-search text-grey"></i>
+                </div>
+                <div
+                  id="clear_appareils"
+                  class="absolute right-12 top-1/2 transform -translate-y-1/2 cursor-pointer hidden"
+                >
+                  <i class="fas fa-times text-sm text-grey"></i>
+                </div>
+              </div>
+              <div class="flex flex-col h-56 overflow-auto">
+                <div class="flex flex-col">
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 1
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 2
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="relative">
+            <button
+              id="ustensiles"
+              class="bg-white h-[56px] font-manrope w-[195px] text-sm flex justify-between items-center text-gray-800 py-4 px-4 rounded-l-lg rounded-r-lg shadow-md"
+            >
+              Ustensiles
+              <svg
+                id="ustensiles_arrow"
+                class="fill-current w-6 h-6 rotate-180"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </button>
+            <div
+              id="ustensiles_dropdown"
+              class="absolute h-[260px] bg-white rounded-br-[8px] top-[50px] rounded-bl-[8px] w-[195px] hidden z-10"
+            >
+              <div class="px-4 cursor-pointer relative">
+                <input
+                  class="h-9 border border-lightGrey text-sm text-grey font-manrope p-2 w-full focus:outline-none"
+                  type="text"
+                  name=""
+                  id="ustensiles_input"
+                />
+                <div
+                  class="absolute right-6 top-1/2 transform -translate-y-1/2"
+                >
+                  <i class="fas fa-search text-grey"></i>
+                </div>
+                <div
+                  id="clear_ustensiles"
+                  class="absolute right-12 top-1/2 transform -translate-y-1/2 cursor-pointer hidden"
+                >
+                  <i class="fas fa-times text-sm text-grey"></i>
+                </div>
+              </div>
+              <div class="flex flex-col h-56 overflow-auto">
+                <div class="flex flex-col">
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 1
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 2
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                  <div
+                    class="h-[37px] font-manrope w-full flex items-center text-sm hover:bg-yellow cursor-pointer px-4"
+                  >
+                    Option 3
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="self-end">
+          <h3 class="font-anton text-xl text-nowrap" id="recipes-number">
+            1500 recettes
+          </h3>
+        </div>
+      </div>
+
+      <div
+        class="flex flex-wrap w-full gap-12 mt-14 px-[100px]"
+        id="cards_container"
+      ></div>
+    </div>
+    <script type="module" src="./js/filters.js"></script>
+    <script type="module" src="./js/cards.js"></script>
+  </body>
 </html>
