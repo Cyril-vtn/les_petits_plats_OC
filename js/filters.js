@@ -83,10 +83,7 @@ const filterRecipes = () => {
 // Function to display the selected filters
 const displaySelectedFilters = (type) => {
   const selectedFiltersDiv = document.getElementById("selected_filters");
-  const selectedList = document.getElementById(`selected_${type}`);
-
   selectedFiltersDiv.innerHTML = "";
-  // selectedList.innerHTML = "";
 
   Object.keys(selectedItems).forEach((type) => {
     selectedItems[type].forEach((item) => {
@@ -99,15 +96,19 @@ const displaySelectedFilters = (type) => {
         " right-4 cursor-pointer fa-solid fa-xmark text-sm ";
 
       deleteElement.addEventListener("click", () => {
+        const selectedList = document.getElementById(`selected_${type}`);
+
         selectedItems[type] = selectedItems[type].filter((i) => i !== item);
-        populateList(type, getItems(type));
-        console.log(selectedList);
+        Array.from(selectedFiltersDiv.childNodes).forEach((div) => {
+          if (div.textContent === item) {
+            selectedFiltersDiv.removeChild(div);
+          }
+        });
         Array.from(selectedList.childNodes).forEach((div) => {
           if (div.textContent === item) {
             selectedList.removeChild(div);
           }
         });
-        displaySelectedFilters(type);
         filterRecipes();
       });
 
