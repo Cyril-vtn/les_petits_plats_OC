@@ -71,72 +71,77 @@ const filterRecipes = () => {
   filteredRecipes = [...recipes];
 
   // We filter the recipes based on the selected items
-  filteredRecipes = filteredRecipes.filter(
-    (recipe) =>
-      selectedItems.ingredients.every((ingredient) =>
-        recipe.ingredients.some((i) => i.ingredient === ingredient)
-      ) &&
-      selectedItems.ustensiles.every((ustensile) =>
-        recipe.ustensils.includes(ustensile)
-      ) &&
-      selectedItems.appareils.every((appareil) => recipe.appliance === appareil)
-  );
+  filteredRecipes = filteredRecipes.filter((recipe) => {
+    const filterByItem = (itemType) => {
+      return selectedItems[itemType].every((item) => {
+        if (itemType === "appareils") {
+          return recipe.appliance === item;
+        }
+        if (itemType === "ingredients") {
+          return recipe.ingredients.some((i) => i.ingredient === item);
+        }
+        return recipe.ustensils.includes(item);
+      });
+    };
+
+    return ["ingredients", "ustensiles", "appareils"].every(filterByItem);
+  });
 
   // If there is an input value, filter based on it
   if (input.value) {
-    filteredRecipes = filteredRecipes.filter(
-      (recipe) =>
-        recipe.name.toLowerCase().includes(input.value.toLowerCase()) ||
-        recipe.ustensils.some((ustensil) =>
-          ustensil.toLowerCase().includes(input.value.toLowerCase())
-        ) ||
-        recipe.ingredients.some((ingredient) =>
-          ingredient.ingredient
-            .toLowerCase()
-            .includes(input.value.toLowerCase())
-        ) ||
-        recipe.appliance.toLowerCase().includes(input.value.toLowerCase())
-    );
+    const inputValueLower = input.value.toLowerCase();
+    filteredRecipes = filteredRecipes.filter((recipe) => {
+      const includesInputValue = (str) =>
+        str.toLowerCase().includes(inputValueLower);
+      return (
+        includesInputValue(recipe.name) ||
+        recipe.ustensils.some(includesInputValue) ||
+        recipe.ingredients.some((i) => includesInputValue(i.ingredient)) ||
+        includesInputValue(recipe.appliance)
+      );
+    });
   }
 
   displayCard(filteredRecipes);
   displayRecipeNumber(filteredRecipes.length);
 };
 
-// Function to display the selected filters
+// Function to create a div for a selected filter
+const createFilterDiv = (item, type, selectedFiltersDiv, selectedList) => {
+  let div = document.createElement("div");
+  div.className =
+    "w-auto h-[53px] text-black text-[14px] font-manrope  bg-yellow rounded-[10px] flex justify-center items-center gap-[60px] px-[18px] py-[17px]";
+  div.textContent = item;
+
+  let deleteElement = document.createElement("i");
+  deleteElement.className =
+    " right-4 cursor-pointer fa-solid fa-xmark text-sm ";
+
+  deleteElement.addEventListener("click", () => {
+    let items = Array.from(
+      document.getElementById(`${type}_list`).childNodes.values()
+    ).map((node) => node.textContent);
+    removeFilter(item, type, selectedFiltersDiv, selectedList, items);
+  });
+
+  div.appendChild(deleteElement);
+  return div;
+};
+
 const displaySelectedFilters = (type) => {
   const selectedFiltersDiv = document.getElementById("selected_filters");
   selectedFiltersDiv.innerHTML = "";
 
   Object.keys(selectedItems).forEach((type) => {
+    const selectedList = document.getElementById(`selected_${type}`);
     selectedItems[type].forEach((item) => {
-      let div = document.createElement("div");
-      div.className =
-        "w-auto h-[53px] text-black text-[14px] font-manrope  bg-yellow rounded-[10px] flex justify-center items-center gap-[60px] px-[18px] py-[17px]";
-      div.textContent = item;
-      let deleteElement = document.createElement("i");
-      deleteElement.className =
-        " right-4 cursor-pointer fa-solid fa-xmark text-sm ";
-
-      deleteElement.addEventListener("click", () => {
-        const selectedList = document.getElementById(`selected_${type}`);
-
-        selectedItems[type] = selectedItems[type].filter((i) => i !== item);
-        Array.from(selectedFiltersDiv.childNodes).forEach((div) => {
-          if (div.textContent === item) {
-            selectedFiltersDiv.removeChild(div);
-          }
-        });
-        Array.from(selectedList.childNodes).forEach((div) => {
-          if (div.textContent === item) {
-            selectedList.removeChild(div);
-          }
-        });
-        filterRecipes();
-      });
-
-      div.appendChild(deleteElement);
-      selectedFiltersDiv.appendChild(div);
+      const filterDiv = createFilterDiv(
+        item,
+        type,
+        selectedFiltersDiv,
+        selectedList
+      );
+      selectedFiltersDiv.appendChild(filterDiv);
     });
   });
 };
@@ -149,6 +154,43 @@ const displayRecipeNumber = (number) => {
 };
 
 // Function to set up the dropdown menu of a given type
+const createItemDiv = (item, type, selectedFiltersDiv, selectedList, items) => {
+  let div = document.createElement("div");
+  div.className =
+    "relative h-[37px] font-manrope w-full flex items-center text-sm bg-yellow text-regular px-4 hover:font-black cursor-pointer group";
+  div.textContent = item;
+  let deleteElement = document.createElement("i");
+  deleteElement.className =
+    "absolute right-4 cursor-pointer fa-solid fa-circle-xmark text-sm invisible group-hover:visible";
+
+  deleteElement.addEventListener("click", () => {
+    removeFilter(item, type, selectedFiltersDiv, selectedList, items);
+  });
+
+  div.appendChild(deleteElement);
+  return div;
+};
+
+const removeFilter = (item, type, selectedFiltersDiv, selectedList, items) => {
+  selectedItems[type] = selectedItems[type].filter((i) => i !== item);
+  Array.from(selectedFiltersDiv.childNodes).forEach((div) => {
+    if (div.textContent === item) {
+      selectedFiltersDiv.removeChild(div);
+    }
+  });
+  Array.from(selectedList.childNodes).forEach((div) => {
+    if (div.textContent === item) {
+      selectedList.removeChild(div);
+    }
+  });
+  if (items) {
+    items.push(item);
+    items.sort();
+    populateList(type, items);
+  }
+  filterRecipes();
+};
+
 const setupDropdown = (type) => {
   let items = getItems(type);
   const button = document.getElementById(`${type}`);
@@ -162,16 +204,13 @@ const setupDropdown = (type) => {
   const selectedList = document.getElementById(`selected_${type}`);
   const selectedFiltersDiv = document.getElementById("selected_filters");
 
-  // We initialize the filtered recipes with all the recipes
   filteredRecipes = recipes;
 
-  // Function to toggle the display of the dropdown menu
   const toggleDropdown = () => {
     arrow.classList.toggle("rotate-180");
     dropdown.classList.toggle("hidden");
   };
 
-  // We add event listeners to handle interaction with the dropdown menu
   button.addEventListener("click", toggleDropdown);
 
   input.addEventListener("input", () => {
@@ -208,44 +247,18 @@ const setupDropdown = (type) => {
       items = items.filter((i) => i !== item);
       populateList(type, items);
 
-      // We create a div to display the selected item
-      let div = document.createElement("div");
-      div.className =
-        "relative h-[37px] font-manrope w-full flex items-center text-sm bg-yellow text-regular px-4 hover:font-black cursor-pointer group";
-      div.textContent = item;
-      let deleteElement = document.createElement("i");
-      deleteElement.className =
-        "absolute right-4 cursor-pointer fa-solid fa-circle-xmark text-sm invisible group-hover:visible";
+      const itemDiv = createItemDiv(
+        item,
+        type,
+        selectedFiltersDiv,
+        selectedList,
+        items
+      );
+      selectedList.appendChild(itemDiv);
 
-      // We add an event listener to remove the item from the selected list
-      deleteElement.addEventListener("click", () => {
-        selectedItems[type] = selectedItems[type].filter((i) => i !== item);
-        Array.from(selectedFiltersDiv.childNodes).forEach((div) => {
-          if (div.textContent === item) {
-            selectedFiltersDiv.removeChild(div);
-          }
-        });
-        Array.from(selectedList.childNodes).forEach((div) => {
-          if (div.textContent === item) {
-            selectedList.removeChild(div);
-          }
-        });
-        items.push(item);
-        items.sort();
-        populateList(type, items);
-        filterRecipes();
-      });
-
-      // We append the delete element to the div and the div to the selected list
-      div.appendChild(deleteElement);
-      selectedList.appendChild(div);
-
-      // We display the selected filters
       displaySelectedFilters(type);
-      // filter the recipes
       filterRecipes();
 
-      // We clear the input and hide the clear button
       input.value = "";
       arrow.classList.remove("rotate-180");
       dropdown.classList.add("hidden");
@@ -263,26 +276,22 @@ displayCard(recipes);
 displayRecipeNumber(recipes.length);
 
 // Event listener for the search button
-searchButton.addEventListener("click", () => {
-  // Start with all recipes or the already filtered recipes
-  let recipesToFilter =
-    filteredRecipes.length === 0 ? recipes : filteredRecipes;
-
-  // Filter based on the search input
-  recipesToFilter = recipesToFilter.filter(
+const filterByInput = (recipesToFilter, inputValue) => {
+  return recipesToFilter.filter(
     (recipe) =>
-      recipe.name.toLowerCase().includes(input.value.toLowerCase()) ||
+      recipe.name.toLowerCase().includes(inputValue) ||
       recipe.ustensils.some((ustensil) =>
-        ustensil.toLowerCase().includes(input.value.toLowerCase())
+        ustensil.toLowerCase().includes(inputValue)
       ) ||
       recipe.ingredients.some((ingredient) =>
-        ingredient.ingredient.toLowerCase().includes(input.value.toLowerCase())
+        ingredient.ingredient.toLowerCase().includes(inputValue)
       ) ||
-      recipe.appliance.toLowerCase().includes(input.value.toLowerCase())
+      recipe.appliance.toLowerCase().includes(inputValue)
   );
+};
 
-  // Apply the selected filters
-  recipesToFilter = recipesToFilter.filter(
+const filterBySelectedItems = (recipesToFilter) => {
+  return recipesToFilter.filter(
     (recipe) =>
       selectedItems.ingredients.every((ingredient) =>
         recipe.ingredients.some((i) => i.ingredient === ingredient)
@@ -292,6 +301,20 @@ searchButton.addEventListener("click", () => {
       ) &&
       selectedItems.appareils.every((appareil) => recipe.appliance === appareil)
   );
+};
+
+// Event listener for the search button
+searchButton.addEventListener("click", () => {
+  // Start with all recipes or the already filtered recipes
+  let recipesToFilter =
+    filteredRecipes.length === 0 ? recipes : filteredRecipes;
+  const inputValue = input.value.toLowerCase();
+
+  // Filter based on the search input
+  recipesToFilter = filterByInput(recipesToFilter, inputValue);
+
+  // Apply the selected filters
+  recipesToFilter = filterBySelectedItems(recipesToFilter);
 
   // Update the displayed recipes
   displayCard(recipesToFilter);
