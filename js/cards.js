@@ -1,90 +1,105 @@
-import { recipes } from "../data/recipes.js";
-
+// Get the container where cards will be displayed
 const cardContainer = document.querySelector("#cards_container");
-const recipeNumber = document.querySelector("#recipes-number");
 
-export function displayCard() {
+export function displayCard(recipes) {
+  // Clear the container
+  cardContainer.innerHTML = "";
+  // Loop through each recipe
   recipes.forEach((recipe) => {
+    // Truncate the description if it's too long
     let truncatedDescription = recipe.description;
     if (recipe.description.length > 180) {
       truncatedDescription = recipe.description.substring(0, 180) + "...";
     }
 
-    let cardInnerDiv = document.createElement("div");
-    cardInnerDiv.className =
+    // Create the main card div
+    let cardDiv = document.createElement("div");
+    cardDiv.className =
       "w-[380px] h-[730px] bg-white rounded-[21px] shadow-lg relative";
-    cardInnerDiv.tabIndex = 0;
+    cardDiv.tabIndex = 0;
 
-    let timeDiv = document.createElement("div");
-    timeDiv.className =
+    // Create the time display
+    let timeDisplayDiv = document.createElement("div");
+    timeDisplayDiv.className =
       "absolute w-[65px] h-[26px] bg-yellow flex justify-center items-center rounded-[14px] top-[21px] right-[22px]";
-    let timeP = document.createElement("p");
-    timeP.textContent = `${recipe.time}min`;
-    timeDiv.appendChild(timeP);
-    cardInnerDiv.appendChild(timeDiv);
+    let timeText = document.createElement("p");
+    timeText.textContent = `${recipe.time}min`;
+    timeDisplayDiv.appendChild(timeText);
+    cardDiv.appendChild(timeDisplayDiv);
 
-    let imgDiv = document.createElement("div");
-    imgDiv.className = "h-[253px] w-full";
-    let img = document.createElement("img");
-    img.className = "h-full w-full object-cover rounded-t-[8px]";
-    img.src = `./assets/images/${recipe.image}`;
-    img.alt = `${recipe.name}`;
-    imgDiv.appendChild(img);
-    cardInnerDiv.appendChild(imgDiv);
+    // Create the image display
+    let imageDiv = document.createElement("div");
+    imageDiv.className = "h-[253px] w-full";
+    let image = document.createElement("img");
+    image.className = "h-full w-full object-cover rounded-t-[21px]";
+    image.src = `./assets/images/${recipe.image}`;
+    image.alt = `${recipe.name}`;
+    imageDiv.appendChild(image);
+    cardDiv.appendChild(imageDiv);
 
+    // Create the name display
     let nameDiv = document.createElement("div");
     nameDiv.className = "pt-8 px-[25px] w-full";
-    let nameH3 = document.createElement("h3");
-    nameH3.className = "font-anton text-[18px] text-black";
-    nameH3.textContent = `${recipe.name}`;
-    nameDiv.appendChild(nameH3);
-    cardInnerDiv.appendChild(nameDiv);
+    let nameText = document.createElement("h3");
+    nameText.className =
+      "font-anton text-[18px] text-black overflow-hidden whitespace-nowrap overflow-ellipsis";
+    nameText.textContent = `${recipe.name}`;
+    nameDiv.appendChild(nameText);
+    cardDiv.appendChild(nameDiv);
 
-    let descDiv = document.createElement("div");
-    descDiv.className = "px-[25px] pt-7";
-    let descP1 = document.createElement("p");
-    descP1.className = "font-manrope font-bold text-[12px] text-grey uppercase";
-    descP1.textContent = "RECETTE";
-    descDiv.appendChild(descP1);
-    let descP2 = document.createElement("p");
-    descP2.className =
+    // Create the description display
+    let descriptionDiv = document.createElement("div");
+    descriptionDiv.className = "px-[25px] pt-7";
+
+    let recipeTitle = document.createElement("p");
+    recipeTitle.className =
+      "font-manrope font-bold text-[12px] text-grey uppercase";
+    recipeTitle.textContent = "RECETTE";
+    descriptionDiv.appendChild(recipeTitle);
+
+    let descriptionText = document.createElement("p");
+    descriptionText.className =
       "font-manrope text-[14px] text-black font-normal pt-[15px]";
-    descP2.textContent = `${truncatedDescription}`;
-    descDiv.appendChild(descP2);
-    cardInnerDiv.appendChild(descDiv);
+    descriptionText.textContent = `${truncatedDescription}`;
+    descriptionDiv.appendChild(descriptionText);
 
-    let ingredientsDiv = document.createElement("div");
-    ingredientsDiv.className =
-      "grid pt-[15px] grid-cols-2 gap-y-[21px] gap-x-[60px]";
+    // Add ingredients to the card
+    let ingredientsContainer = document.createElement("div");
+    ingredientsContainer.className = "pt-[32px]";
+    let ingredientTitle = document.createElement("p");
+    ingredientTitle.className =
+      "font-manrope font-bold text-[12px] text-grey uppercase";
+    ingredientTitle.textContent = "INGRÉDIENTS";
+
+    let ingredientsGrid = document.createElement("div");
+    ingredientsGrid.className =
+      "grid pt-[15px] grid-cols-2 gap-y-[21px] w-auto";
+    ingredientsContainer.appendChild(ingredientTitle);
+
     recipe.ingredients.forEach((ingredient) => {
       let ingredientDiv = document.createElement("div");
-      ingredientDiv.className = "flex flex-col gap-[1px]";
-      let ingredientH3 = document.createElement("h3");
-      ingredientH3.className =
-        "font-manrope text-[14px] font-medium text-black text-nowrap";
-      ingredientH3.textContent = `${ingredient.ingredient}`;
-      ingredientDiv.appendChild(ingredientH3);
-      let ingredientP = document.createElement("p");
-      ingredientP.className = "font-manrope text-[14px] font-normal text-grey";
-      ingredientP.textContent = `${
-        ingredient.quantity && ingredient.quantity !== 0
-          ? ingredient.quantity
-          : ""
-      } ${
-        ingredient.unit && ingredient.unit !== "unit" ? ingredient.unit : ""
-      }`;
-      ingredientDiv.appendChild(ingredientP);
-      ingredientsDiv.appendChild(ingredientDiv);
+      ingredientDiv.className = "flex flex-col w-auto";
+
+      let ingredientName = document.createElement("p");
+      ingredientName.className =
+        "font-manrope text-[14px] text-black overflow-hidden whitespace-nowrap overflow-ellipsis w-auto";
+      ingredientName.textContent = ingredient.ingredient;
+      ingredientDiv.appendChild(ingredientName);
+
+      let ingredientQuantity = document.createElement("p");
+      ingredientQuantity.className = "font-manrope text-[14px] text-grey";
+      if (ingredient.quantity !== undefined) {
+        ingredientQuantity.textContent =
+          ingredient.quantity + " " + (ingredient.unit ? ingredient.unit : "");
+      }
+      ingredientDiv.appendChild(ingredientQuantity);
+
+      ingredientsGrid.appendChild(ingredientDiv);
+      ingredientsContainer.appendChild(ingredientsGrid);
+      descriptionDiv.appendChild(ingredientsContainer);
     });
-    cardInnerDiv.appendChild(ingredientsDiv);
 
-    cardContainer.appendChild(cardInnerDiv);
+    cardDiv.appendChild(descriptionDiv);
+    cardContainer.appendChild(cardDiv);
   });
-  recipeNumber.textContent = `${recipes.length} recette${
-    recipes.length > 1 ? "s" : ""
-  }`;
 }
-
-function addIngredientsToCard() {}
-
-displayCard();
