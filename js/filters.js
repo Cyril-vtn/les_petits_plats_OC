@@ -3,6 +3,11 @@ import { recipes } from "../data/recipes.js";
 import { displayCard } from "./cards.js";
 import { ITEM_TYPES } from "./api.types.js";
 
+// get the input, search button and clear button
+const input = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const clearButton = document.getElementById("clear");
+
 // Initialization of selected items
 let selectedItems = {
   ingredients: [],
@@ -11,7 +16,7 @@ let selectedItems = {
 };
 
 //
-let filteredRecipes = [];
+export let filteredRecipes = [];
 
 // Function to get the elements of each type
 const getItems = (type) => {
@@ -76,6 +81,24 @@ const filterRecipes = () => {
       ) &&
       selectedItems.appareils.every((appareil) => recipe.appliance === appareil)
   );
+
+  // If there is an input value, filter based on it
+  if (input.value) {
+    filteredRecipes = filteredRecipes.filter(
+      (recipe) =>
+        recipe.name.toLowerCase().includes(input.value.toLowerCase()) ||
+        recipe.ustensils.some((ustensil) =>
+          ustensil.toLowerCase().includes(input.value.toLowerCase())
+        ) ||
+        recipe.ingredients.some((ingredient) =>
+          ingredient.ingredient
+            .toLowerCase()
+            .includes(input.value.toLowerCase())
+        ) ||
+        recipe.appliance.toLowerCase().includes(input.value.toLowerCase())
+    );
+  }
+
   displayCard(filteredRecipes);
   displayRecipeNumber(filteredRecipes.length);
 };
@@ -238,3 +261,51 @@ displayCard(recipes);
 
 // Initialize displayRecipeNumber function when the page loads
 displayRecipeNumber(recipes.length);
+
+// Event listener for the search button
+searchButton.addEventListener("click", () => {
+  // Start with all recipes or the already filtered recipes
+  let recipesToFilter =
+    filteredRecipes.length === 0 ? recipes : filteredRecipes;
+
+  // Filter based on the search input
+  recipesToFilter = recipesToFilter.filter(
+    (recipe) =>
+      recipe.name.toLowerCase().includes(input.value.toLowerCase()) ||
+      recipe.ustensils.some((ustensil) =>
+        ustensil.toLowerCase().includes(input.value.toLowerCase())
+      ) ||
+      recipe.ingredients.some((ingredient) =>
+        ingredient.ingredient.toLowerCase().includes(input.value.toLowerCase())
+      ) ||
+      recipe.appliance.toLowerCase().includes(input.value.toLowerCase())
+  );
+
+  // Apply the selected filters
+  recipesToFilter = recipesToFilter.filter(
+    (recipe) =>
+      selectedItems.ingredients.every((ingredient) =>
+        recipe.ingredients.some((i) => i.ingredient === ingredient)
+      ) &&
+      selectedItems.ustensiles.every((ustensile) =>
+        recipe.ustensils.includes(ustensile)
+      ) &&
+      selectedItems.appareils.every((appareil) => recipe.appliance === appareil)
+  );
+
+  // Update the displayed recipes
+  displayCard(recipesToFilter);
+  displayRecipeNumber(recipesToFilter.length);
+});
+
+// Event listener for the clear button
+clearButton.addEventListener("click", () => {
+  input.value = "";
+  // Reset selected items
+  filterRecipes();
+});
+
+// Event listener for the input
+input.addEventListener("input", () => {
+  clearButton.classList.toggle("hidden", input.value.length === 0);
+});
