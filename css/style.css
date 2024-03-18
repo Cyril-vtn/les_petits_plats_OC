@@ -966,6 +966,10 @@ video {
   padding-bottom: 17px;
 }
 
+.pb-7 {
+  padding-bottom: 1.75rem;
+}
+
 .pl-24 {
   padding-left: 6rem;
 }
