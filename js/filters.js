@@ -277,16 +277,20 @@ displayRecipeNumber(recipes.length);
 
 // Event listener for the search button
 const filterByInput = (recipesToFilter, inputValue) => {
-  return recipesToFilter.filter(
-    (recipe) =>
-      recipe.name.toLowerCase().includes(inputValue) ||
-      recipe.ustensils.some((ustensil) =>
-        ustensil.toLowerCase().includes(inputValue)
-      ) ||
-      recipe.ingredients.some((ingredient) =>
-        ingredient.ingredient.toLowerCase().includes(inputValue)
-      ) ||
-      recipe.appliance.toLowerCase().includes(inputValue)
+  const lowerCaseInput = inputValue.toLowerCase();
+  recipesToFilter.map((recipe) => {
+    recipe.filterValues = [
+      recipe.name,
+      ...recipe.ingredients.map((i) => i.ingredient),
+      ...recipe.ustensils,
+      recipe.appliance,
+    ];
+  });
+
+  return recipesToFilter.filter((recipe) =>
+    recipe.filterValues.some((value) =>
+      value.toLowerCase().includes(lowerCaseInput)
+    )
   );
 };
 
