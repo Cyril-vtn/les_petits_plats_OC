@@ -324,6 +324,7 @@ searchButton.addEventListener("click", () => {
 // Event listener for the clear button
 clearButton.addEventListener("click", () => {
   input.value = "";
+  clearButton.classList.add("hidden");
   // Reset selected items
   filterRecipes();
 });
