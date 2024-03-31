@@ -328,12 +328,26 @@ const filterBySelectedItems = (recipesToFilter) => {
   );
 };
 
+// create a function to escape HTML characters to prevent HTML injection attacks
+const escapeHTML = (unsafeText) => {
+  let div = document.createElement("div");
+  div.textContent = unsafeText;
+  return div.innerHTML;
+};
+
 // Event listener for the search button
 searchButton.addEventListener("click", () => {
+  // start at 3 caracter for the search input
+  if (input.value.length < 3) {
+    return;
+  }
+
+  // Escape the search input to prevent HTML injection
+  const inputValue = escapeHTML(input.value).toLowerCase();
+
   // Start with all recipes or the already filtered recipes
   let recipesToFilter =
     filteredRecipes.length === 0 ? recipes : filteredRecipes;
-  const inputValue = input.value.toLowerCase();
 
   // Filter based on the search input
   recipesToFilter = filterByInput(recipesToFilter, inputValue);
