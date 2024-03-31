@@ -21,27 +21,49 @@ export let filteredRecipes = [];
 // Function to get the elements of each type
 const getItems = (type) => {
   let items = [];
-  recipes.forEach((recipe) => {
+
+  if (filteredRecipes.length === 0) {
+    filteredRecipes = recipes;
+  } else {
+    filteredRecipes = filteredRecipes;
+  }
+
+  filteredRecipes.forEach((recipe) => {
     let elements = [];
     switch (type) {
-      // For ingredients, we extract the name of each ingredient
       case ITEM_TYPES.INGREDIENTS:
-        elements = recipe.ingredients.map(
-          (ingredient) => ingredient.ingredient
+        elements = recipe.ingredients
+          .map((ingredient) => ingredient.ingredient)
+          .filter(
+            (ingredient) =>
+              !selectedItems[type]
+                .map((i) => i.toLowerCase())
+                .includes(ingredient.toLowerCase())
+          );
+        break;
+      case ITEM_TYPES.USTENSILES:
+        elements = recipe.ustensils
+          .map((ustensil) => ustensil)
+          .filter(
+            (ustensil) =>
+              !selectedItems[type]
+                .map((i) => i.toLowerCase())
+                .includes(ustensil.toLowerCase())
+          );
+        break;
+      case ITEM_TYPES.APPAREILS:
+        elements = [recipe.appliance].filter(
+          (appliance) =>
+            !selectedItems[type]
+              .map((i) => i.toLowerCase())
+              .includes(appliance.toLowerCase())
         );
         break;
-      // For utensils, we directly use the array
-      case ITEM_TYPES.USTENSILES:
-        elements = recipe.ustensils;
-        break;
-      // For appliances, we create an array from the unique value
-      case ITEM_TYPES.APPAREILS:
-        elements = [recipe.appliance];
-        break;
     }
-    // We add each element to the list if it is not already there
+
     elements.forEach((element) => {
-      if (!items.includes(element)) {
+      const lowerCaseElement = element.toLowerCase();
+      if (!items.map((item) => item.toLowerCase()).includes(lowerCaseElement)) {
         items.push(element);
       }
     });
@@ -131,7 +153,6 @@ const createFilterDiv = (item, type, selectedFiltersDiv, selectedList) => {
 const displaySelectedFilters = (type) => {
   const selectedFiltersDiv = document.getElementById("selected_filters");
   selectedFiltersDiv.innerHTML = "";
-
   Object.keys(selectedItems).forEach((type) => {
     const selectedList = document.getElementById(`selected_${type}`);
     selectedItems[type].forEach((item) => {
@@ -189,6 +210,9 @@ const removeFilter = (item, type, selectedFiltersDiv, selectedList, items) => {
     populateList(type, items);
   }
   filterRecipes();
+
+  // Call getItems for each type after removing a filter
+  ["ingredients", "ustensiles", "appareils"].forEach((type) => getItems(type));
 };
 
 const setupDropdown = (type) => {
@@ -243,22 +267,26 @@ const setupDropdown = (type) => {
   list.addEventListener("click", (e) => {
     if (e.target.tagName === "DIV") {
       let item = e.target.textContent;
-      selectedItems[type].push(item);
-      items = items.filter((i) => i !== item);
-      populateList(type, items);
+      if (!selectedItems[type].includes(item)) {
+        selectedItems[type].push(item);
+        items = items.filter((i) => i !== item);
+        populateList(type, items);
 
-      const itemDiv = createItemDiv(
-        item,
-        type,
-        selectedFiltersDiv,
-        selectedList,
-        items
-      );
-      selectedList.appendChild(itemDiv);
+        const itemDiv = createItemDiv(
+          item,
+          type,
+          selectedFiltersDiv,
+          selectedList,
+          items
+        );
+        selectedList.appendChild(itemDiv);
 
-      displaySelectedFilters(type);
-      filterRecipes();
-
+        displaySelectedFilters(type);
+        filterRecipes();
+        ["ingredients", "ustensiles", "appareils"].forEach((type) =>
+          getItems(type)
+        );
+      }
       input.value = "";
       arrow.classList.remove("rotate-180");
       dropdown.classList.add("hidden");
@@ -316,9 +344,15 @@ searchButton.addEventListener("click", () => {
   // Apply the selected filters
   recipesToFilter = filterBySelectedItems(recipesToFilter);
 
+  // Update filteredRecipes
+  filteredRecipes = recipesToFilter;
+
   // Update the displayed recipes
   displayCard(recipesToFilter);
   displayRecipeNumber(recipesToFilter.length);
+
+  // Call getItems for each type after filtering
+  ["ingredients", "ustensiles", "appareils"].forEach((type) => getItems(type));
 });
 
 // Event listener for the clear button
@@ -327,6 +361,7 @@ clearButton.addEventListener("click", () => {
   clearButton.classList.add("hidden");
   // Reset selected items
   filterRecipes();
+  ["ingredients", "ustensiles", "appareils"].forEach((type) => getItems(type));
 });
 
 // Event listener for the input
