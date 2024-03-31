@@ -308,13 +308,10 @@ const filterByInput = (recipesToFilter, inputValue) => {
   return recipesToFilter.filter(
     (recipe) =>
       recipe.name.toLowerCase().includes(inputValue) ||
-      recipe.ustensils.some((ustensil) =>
-        ustensil.toLowerCase().includes(inputValue)
-      ) ||
+      recipe.description.toLowerCase().includes(inputValue) ||
       recipe.ingredients.some((ingredient) =>
         ingredient.ingredient.toLowerCase().includes(inputValue)
-      ) ||
-      recipe.appliance.toLowerCase().includes(inputValue)
+      )
   );
 };
 
