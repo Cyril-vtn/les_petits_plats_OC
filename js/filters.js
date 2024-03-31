@@ -110,20 +110,9 @@ const filterRecipes = () => {
   });
 
   // If there is an input value, filter based on it
-  if (input.value) {
-    const inputValueLower = input.value.toLowerCase();
-    filteredRecipes = filteredRecipes.filter((recipe) => {
-      const includesInputValue = (str) =>
-        str.toLowerCase().includes(inputValueLower);
-      return (
-        includesInputValue(recipe.name) ||
-        recipe.ustensils.some(includesInputValue) ||
-        recipe.ingredients.some((i) => includesInputValue(i.ingredient)) ||
-        includesInputValue(recipe.appliance)
-      );
-    });
+  if (input.value.length >= 3) {
+    filteredRecipes = filterByInput(filteredRecipes, input.value.toLowerCase());
   }
-
   displayCard(filteredRecipes);
   displayRecipeNumber(filteredRecipes.length);
 };
@@ -305,14 +294,28 @@ displayRecipeNumber(recipes.length);
 
 // Event listener for the search button
 const filterByInput = (recipesToFilter, inputValue) => {
-  return recipesToFilter.filter(
-    (recipe) =>
+  let filteredRecipes = [];
+
+  for (let i = 0; i < recipesToFilter.length; i++) {
+    let recipe = recipesToFilter[i];
+
+    if (
       recipe.name.toLowerCase().includes(inputValue) ||
-      recipe.description.toLowerCase().includes(inputValue) ||
-      recipe.ingredients.some((ingredient) =>
-        ingredient.ingredient.toLowerCase().includes(inputValue)
-      )
-  );
+      recipe.description.toLowerCase().includes(inputValue)
+    ) {
+      filteredRecipes.push(recipe);
+      continue;
+    }
+
+    for (let j = 0; j < recipe.ingredients.length; j++) {
+      if (recipe.ingredients[j].ingredient.toLowerCase().includes(inputValue)) {
+        filteredRecipes.push(recipe);
+        break;
+      }
+    }
+  }
+
+  return filteredRecipes;
 };
 
 const filterBySelectedItems = (recipesToFilter) => {
