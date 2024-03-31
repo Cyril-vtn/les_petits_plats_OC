@@ -110,20 +110,9 @@ const filterRecipes = () => {
   });
 
   // If there is an input value, filter based on it
-  if (input.value) {
-    const inputValueLower = input.value.toLowerCase();
-    filteredRecipes = filteredRecipes.filter((recipe) => {
-      const includesInputValue = (str) =>
-        str.toLowerCase().includes(inputValueLower);
-      return (
-        includesInputValue(recipe.name) ||
-        recipe.ustensils.some(includesInputValue) ||
-        recipe.ingredients.some((i) => includesInputValue(i.ingredient)) ||
-        includesInputValue(recipe.appliance)
-      );
-    });
+  if (input.value.length >= 3) {
+    filteredRecipes = filterByInput(filteredRecipes, input.value.toLowerCase());
   }
-
   displayCard(filteredRecipes);
   displayRecipeNumber(filteredRecipes.length);
 };
